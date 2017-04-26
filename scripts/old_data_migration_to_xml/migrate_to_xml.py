@@ -16,6 +16,7 @@ from kobotoolbox_upload import *
 city_option = {
 	'1': 'Pune',
 	'2': 'PCMC',
+	'3': 'Kolhapur'
 }
 
 survey_type_option = {
@@ -33,6 +34,7 @@ select_option = {
 city_mapping = {
 	'1' : 4, # Pune
 	'2' : 5, # PCMC
+	'3'	: 7, # Kolhapur
 }
 
 city_survey_mapping = {
@@ -48,6 +50,12 @@ city_survey_mapping = {
 		'2': [36], # RHS
 		'3': 35, # FF
 	},
+	# Kolhapur
+	'3': {
+		'1': 41, # RA
+		'2': [40], # RHS
+		'3': 42, # FF
+	}
 }
 
 mapped_excel_path_mapping = {
@@ -62,6 +70,10 @@ mapped_excel_path_mapping = {
 		'1': os.path.join(root_folder_path, 'FilesToRead', 'MappedExcel_PCMC', 'RA_Old_New_QuestionMapping_Parag.xlsx'), # RA
 		'2': os.path.join(root_folder_path, 'FilesToRead', 'MappedExcel_PCMC', 'RHS_Old_New_QuestionMapping_Parag.xlsx'), # RHS
 		'3': os.path.join(root_folder_path, 'FilesToRead', 'MappedExcel_PCMC', 'FF_Old_New_QuestionMapping_Parag.xlsx'), # FF
+	},
+	# Kolhapur
+	'3': { 
+		'1': os.path.join(root_folder_path, 'FilesToRead', 'MappedExcel_Kolhapur', 'FF_Old_New_QuestionMapping_Tanmayee.xlsx'), # FF
 	},
 }
 
