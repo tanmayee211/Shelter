@@ -293,8 +293,9 @@ def read_map_excel(excelFile):
 	#open excel file 
 	#read mapping for quetion and new xml key
 	#create mapping dict
-	
+
 	workbook = openpyxl.load_workbook(excelFile)
+		
 	
 	# List sheet names, and pull a sheet by name
 	sheet_names = workbook.get_sheet_names()
@@ -348,6 +349,7 @@ def read_map_excel(excelFile):
 
 # get answer for xml key from question-answer dictionary
 def get_answer(xml_key, fact_dict):
+
 	global question_map_dict
 	global question_option_map_dict
 	answer = None

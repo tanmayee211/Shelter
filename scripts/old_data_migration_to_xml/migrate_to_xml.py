@@ -73,7 +73,7 @@ mapped_excel_path_mapping = {
 	},
 	# Kolhapur
 	'3': { 
-		'1': os.path.join(root_folder_path, 'FilesToRead', 'MappedExcel_Kolhapur', 'FF_Old_New_QuestionMapping_Tanmayee.xlsx'), # FF
+		'3': os.path.join(root_folder_path, 'FilesToRead', 'MappedExcel_Kolhapur', 'FF_Old_New_QuestionMapping_Tanmayee.xlsx'), # FF
 	},
 }
 
@@ -94,10 +94,10 @@ survey_xml_value_mapping = {
 	},
 	# FF
 	'3': { 
-		'xml_root': 'arYdwNvdtxSQACTGudh8CH',
-		'xml_root_attr_id': 'arYdwNvdtxSQACTGudh8CH',
-		'xml_root_attr_version': 'v6eYZVeo6V3vqy6jhcDueQ',
-		'formhub_uuid': '53d6a92a6af14094b24b25a3bc7d3861',
+		'xml_root': 'ao9e8wVuLjeiJPhPXmYR29',
+		'xml_root_attr_id': 'ao9e8wVuLjeiJPhPXmYR29',
+		'xml_root_attr_version': 'vGKYdRrbixjwDyUSBB6LiZ',
+		'formhub_uuid': '4ebff47c796a446cb7b9ac4b03f7d9f5',
 	},
 }
 
@@ -335,9 +335,13 @@ def migrate():
 		city = select_option['city']
 		survey = select_option['survey_type']
 		
+		print ("**************************Survey type", survey)
+		
 		if city:
 			city_id = city_mapping[city]
 			city_name = city_option[city]
+			
+			print ("******************************City id and name", city_id, city_name)
 		else:
 			print('Cannot migrate data. Please contact administrator - city error')
 		

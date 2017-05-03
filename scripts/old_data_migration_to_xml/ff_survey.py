@@ -24,8 +24,8 @@ gl_ff_xml_dict = {
 	'group_oh4zf84' : {
 		'Name_of_the_family_head' : None,
 		'Name_of_Native_villa_district_and_state' : None,
-		'Duration_of_stay_in_the_city' : None,
-		'Duration_of_stay_in_s_current_settlement' : None,
+		'Duration_of_stay_in_the_city_in_Years' : None,
+		'Duration_of_stay_in_settlement_in_Years' : None,
 		'Type_of_house' : None,
 		'Ownership_status' : None
 	},
@@ -40,14 +40,14 @@ gl_ff_xml_dict = {
 		'If_yes_specify_type_of_disability' : None,
 		'Number_of_earning_members' : None,
 		'Occupation_s_of_earning_membe': None,
-		'Occupation_s_of_earning_members' : None,
-		'Approximate_monthly_family_income' : None
+# 		'Occupation_s_of_earning_members' : None,
+		'Approximate_monthly_family_income_in_Rs' : None
 	},
 	'group_ne3ao98' : {
 		'Where_the_individual_ilet_is_connected_to' : None,
 		'Who_has_built_your_toilet' : None,
 		'Have_you_upgraded_yo_ng_individual_toilet' : None,
-		'Cost_of_upgradation' : None,
+		'Cost_of_upgradation_in_Rs' : None,
 		'Use_of_toilet' : None
 	},
 	'Note' : None,
@@ -125,6 +125,8 @@ def create_ff_xml(options):
 	survey_id = options['survey']
 	mapexcelfile = options['mapped_excelFile']
 	output_folder_path = options['output_path']
+
+# 	print ("*************************options array", options)
 	
 	unprocess_records = {}
 	
@@ -132,7 +134,7 @@ def create_ff_xml(options):
 	
 	#read old xls file city - ward - slum mapping
 	read_xml_excel(FF_excelFile)
-	#print("Read excel file")
+	#print("Read excel file", FF_excelFile)
 	write_log("Read excel file " + FF_excelFile)
 	
 	#print(city_ward_slum_dict)
@@ -201,10 +203,11 @@ def create_ff_xml(options):
 			
 			# get question and answer for households in slum
 			household_fact = get_household_wise_question_answer(qry_ff_survey_slum_household_question_answer % (survey_id, project_id, slum, survey_id, project_id, slum))
-			#print(household_fact)
+# 			print(household_fact)
 			total_process_house += len(household_fact)
 			
 			household_photo_fact = get_household_wise_question_answer(qry_ff_survey_slum_household_photos % (survey_id, project_id, slum))
+# 			print ("******************", household_photo_fact)
 			
 			# set progress bar
 			show_progress_bar(progess_counter, total_process_house)
@@ -251,8 +254,8 @@ def create_ff_xml(options):
 					#Family Information
 					ff_xml_dict['group_oh4zf84']['Name_of_the_family_head'] = get_answer('Name_of_the_family_head', fact)
 					ff_xml_dict['group_oh4zf84']['Name_of_Native_villa_district_and_state'] = get_answer('Name_of_Native_villa_district_and_state', fact)
-					ff_xml_dict['group_oh4zf84']['Duration_of_stay_in_the_city'] = get_answer('Duration_of_stay_in_the_city', fact)
-					ff_xml_dict['group_oh4zf84']['Duration_of_stay_in_s_current_settlement'] = get_answer('Duration_of_stay_in_s_current_settlement', fact)
+					ff_xml_dict['group_oh4zf84']['Duration_of_stay_in_the_city_in_Years'] = get_answer('Duration_of_stay_in_the_city_in_Years', fact)
+					ff_xml_dict['group_oh4zf84']['Duration_of_stay_in_settlement_in_Years'] = get_answer('Duration_of_stay_in_settlement_in_Years', fact)
 					
 					Type_of_house = get_answer('Type_of_house', fact)
 					if Type_of_house:
@@ -318,16 +321,16 @@ def create_ff_xml(options):
 						#unprocess_records[str(slum)].append([str(household), "unable to process number of disable member for answer =>"+(Number_of_disabled_members if Number_of_disabled_members else 'NoneTYpe')])
 						pass
 					
-					Number_of_earning_members = get_answer('Number_of_earning_members', fact)
-					try:
-						ff_xml_dict['group_im2th52']['Number_of_earning_members'] = int(Number_of_earning_members)
-					except:
-						#unprocess_records[str(slum)].append([str(household), "unable to process number of disable member for answer =>"+(Number_of_earning_members if Number_of_earning_members else 'NoneTYpe')])
-						pass
+# 					Number_of_earning_members = get_answer('Number_of_earning_members', fact)
+# 					try:
+# 						ff_xml_dict['group_im2th52']['Number_of_earning_members'] = int(Number_of_earning_members)
+# 					except:
+# 						#unprocess_records[str(slum)].append([str(household), "unable to process number of disable member for answer =>"+(Number_of_earning_members if Number_of_earning_members else 'NoneTYpe')])
+# 						pass
 					
 					ff_xml_dict['group_im2th52']['Occupation_s_of_earning_membe'] = get_answer('Occupation_s_of_earning_membe', fact)
 					
-					ff_xml_dict['group_im2th52']['Approximate_monthly_family_income'] = get_answer('Approximate_monthly_family_income', fact)
+					ff_xml_dict['group_im2th52']['Approximate_monthly_family_income_in_Rs'] = get_answer('Approximate_monthly_family_income_in_Rs', fact)
 					
 					#print('process - Family Members Information')
 					#write_log('process - Family Members Information')
@@ -345,7 +348,7 @@ def create_ff_xml(options):
 					if Have_you_upgraded_yo_ng_individual_toilet:
 						ff_xml_dict['group_ne3ao98']['Have_you_upgraded_yo_ng_individual_toilet'] = Have_you_upgraded_yo_ng_individual_toilet
 					
-					ff_xml_dict['group_ne3ao98']['Cost_of_upgradation'] = get_answer('Cost_of_upgradation', fact)
+					ff_xml_dict['group_ne3ao98']['Cost_of_upgradation_in_Rs'] = get_answer('Cost_of_upgradation_in_Rs', fact)
 					
 					Use_of_toilet = get_answer('Use_of_toilet', fact)
 					if Use_of_toilet:
@@ -357,6 +360,7 @@ def create_ff_xml(options):
 					ff_xml_dict['Note'] = get_answer('Note', fact)
 					
 					photo_downlaod_folder = os.path.join(output_folder_path, "photos", "slum_" +str(slum))
+# 					print ("********************photo download folder", photo_downlaod_folder)
 					ff_xml_dict['Family_Photo'] = get_ff_photo('Family_Photo', photo_fact, photo_downlaod_folder)
 					ff_xml_dict['Toilet_Photo'] = get_ff_photo('Toilet_Photo', photo_fact, photo_downlaod_folder)
 					
@@ -378,7 +382,7 @@ def create_ff_xml(options):
 					
 					success += 1
 						
-					#print ('ff data - ', ff_xml_dict)
+# 					print ('ff data - ', ff_xml_dict)
 					
 					del ff_xml_dict
 					
