@@ -271,8 +271,8 @@ def read_xml_excel(excelFile):
 						break
 				
 	
-	#print("dict - ", option_dict)
-	#print("city_ward_slum_dict - ", city_ward_slum_dict)
+# 	print("dict - ", option_dict)
+# 	print("city_ward_slum_dict - ", city_ward_slum_dict)
 	
 	# read choice sheet to create option mapping dict 
 	for row in range(sheet_survey.nrows):
@@ -733,6 +733,7 @@ def get_ff_photo(xml_key, fact_dict, download_folder_path):
 	#check if answer is available
 	if fact_dict:
 		photo = get_answer(xml_key, fact_dict)
+		print ("***************photo after getting answer", photo)
 		
 		# get photo path (relative path)
 		photo_path = photo if not isinstance(photo, list) else photo[0]
@@ -751,11 +752,13 @@ def get_ff_photo(xml_key, fact_dict, download_folder_path):
 				#print('download_photo_path => ', download_photo_path)
 				
 				try:
+					
 					if not os.path.exists(download_folder_path):
 						os.makedirs(download_folder_path)
 				
 					# Download the file from `url` and save it locally under `file_name`:
 					response = requests.get(photo_url, stream=True, verify=False)
+					print ("*****************", response)
 					with open(download_photo_path, 'wb') as out_file:
 						shutil.copyfileobj(response.raw, out_file) # copy from temp location to final location
 					del response
@@ -768,7 +771,6 @@ def get_ff_photo(xml_key, fact_dict, download_folder_path):
 					exception_log = 'Exception occurred for fetching photo \t  exception : '+ str(ex) +' \t  traceback : '+ traceback.format_exc()
 					write_log(exception_log)
 					pass
-	
 	return answer;
 
 

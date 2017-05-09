@@ -94,10 +94,10 @@ survey_xml_value_mapping = {
 	},
 	# FF
 	'3': { 
-		'xml_root': 'ao9e8wVuLjeiJPhPXmYR29',
-		'xml_root_attr_id': 'ao9e8wVuLjeiJPhPXmYR29',
-		'xml_root_attr_version': 'vGKYdRrbixjwDyUSBB6LiZ',
-		'formhub_uuid': '4ebff47c796a446cb7b9ac4b03f7d9f5',
+		'xml_root': 'atjamgPULozZeWmMoNZ5Gc',
+		'xml_root_attr_id': 'atjamgPULozZeWmMoNZ5Gc',
+		'xml_root_attr_version': 'vdy8CggwVCQrmTXtwojzhk',
+		'formhub_uuid': 'c18aecd001e641338228fa2ac0cb8a74',
 	},
 }
 
@@ -335,13 +335,13 @@ def migrate():
 		city = select_option['city']
 		survey = select_option['survey_type']
 		
-		print ("**************************Survey type", survey)
+# 		print ("**************************Survey type", survey)
 		
 		if city:
 			city_id = city_mapping[city]
 			city_name = city_option[city]
 			
-			print ("******************************City id and name", city_id, city_name)
+# 			print ("******************************City id and name", city_id, city_name)
 		else:
 			print('Cannot migrate data. Please contact administrator - city error')
 		
