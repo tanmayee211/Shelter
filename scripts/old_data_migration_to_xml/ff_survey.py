@@ -24,8 +24,8 @@ gl_ff_xml_dict = {
 	'group_oh4zf84' : {
 		'Name_of_the_family_head' : None,
 		'Name_of_Native_villa_district_and_state' : None,
-		'Duration_of_stay_in_the_city' : None,
-		'Duration_of_stay_in_s_current_settlement' : None,
+		'Duration_of_stay_in_the_city_in_Years' : None,
+		'Duration_of_stay_in_settlement_in_Years' : None,
 		'Type_of_house' : None,
 		'Ownership_status' : None
 	},
@@ -41,13 +41,13 @@ gl_ff_xml_dict = {
 		'Number_of_earning_members' : None,
 		'Occupation_s_of_earning_membe': None,
 		'Occupation_s_of_earning_members' : None,
-		'Approximate_monthly_family_income' : None
+		'Approximate_monthly_family_income_in_Rs' : None
 	},
 	'group_ne3ao98' : {
 		'Where_the_individual_ilet_is_connected_to' : None,
 		'Who_has_built_your_toilet' : None,
 		'Have_you_upgraded_yo_ng_individual_toilet' : None,
-		'Cost_of_upgradation' : None,
+		'Cost_of_upgradation_in_Rs' : None,
 		'Use_of_toilet' : None
 	},
 	'Note' : None,
@@ -144,9 +144,9 @@ def create_ff_xml(options):
 	
 	# get slum code list
 	slum_code_list = get_slum_code(qry_slum_list % survey_id)
-	#print("fatch slum code")
-	#print(slum_code_list)
-	write_log("fatch slum code")
+	#print("fetch slum code")
+	#print("*************slum code list is : ", slum_code_list)
+	write_log("fetch slum code")
 	
 	# get slum and household list
 	slum_household_list = get_household_survey(qry_ff_slum_household_survey_list % (survey_id, project_id))
@@ -193,11 +193,26 @@ def create_ff_xml(options):
 		
 		# process data only if slum code exists
 		if slum_code:
+			if slum_code.strip() == '272537896205' or slum_code.strip() == '272537894801': #change the slum code for Kate Vasti and Tapkir nagar
+				slum_code = '272537896201';
+				
+			elif slum_code.strip() == '272537895601' : #change the slum code for rajiv gandhi nagar
+				slum_code =  '272537895602' 
+				
+			elif slum_code.strip() == '272537894301' : #change the slum code for baldeo nagar
+				slum_code =  '272537894303'
+ 				
+			elif slum_code.strip() == '272537894303' : #change the slum code for kailas nagar
+				slum_code =  '272537894305'
+ 				
+			elif slum_code.strip() == '272537894305' : #change the slum code for shastri nagar
+				slum_code =  '272537894308'
+					
 			#get admin ward and city code for slum
 			admin_ward = get_admin_ward(slum_code)
 			city = get_city_id(admin_ward)
 			
-			#print('slum_code : %s  admin_ward : %s  city : %s' % (slum_code, admin_ward, city))
+			print('slum_code : %s  admin_ward : %s  city : %s' % (slum_code, admin_ward, city))
 			
 			# get question and answer for households in slum
 			household_fact = get_household_wise_question_answer(qry_ff_survey_slum_household_question_answer % (survey_id, project_id, slum, survey_id, project_id, slum))
@@ -251,8 +266,8 @@ def create_ff_xml(options):
 					#Family Information
 					ff_xml_dict['group_oh4zf84']['Name_of_the_family_head'] = get_answer('Name_of_the_family_head', fact)
 					ff_xml_dict['group_oh4zf84']['Name_of_Native_villa_district_and_state'] = get_answer('Name_of_Native_villa_district_and_state', fact)
-					ff_xml_dict['group_oh4zf84']['Duration_of_stay_in_the_city'] = get_answer('Duration_of_stay_in_the_city', fact)
-					ff_xml_dict['group_oh4zf84']['Duration_of_stay_in_s_current_settlement'] = get_answer('Duration_of_stay_in_s_current_settlement', fact)
+					ff_xml_dict['group_oh4zf84']['Duration_of_stay_in_the_city_in_Years'] = get_answer('Duration_of_stay_in_the_city_in_Years', fact)
+					ff_xml_dict['group_oh4zf84']['Duration_of_stay_in_settlement_in_Years'] = get_answer('Duration_of_stay_in_settlement_in_Years', fact)
 					
 					Type_of_house = get_answer('Type_of_house', fact)
 					if Type_of_house:
@@ -312,7 +327,7 @@ def create_ff_xml(options):
 					try:
 						ff_xml_dict['group_im2th52']['Number_of_disabled_members'] = int(Number_of_disabled_members)
 						
-						if Number_of_disabled_members > 0:
+						if int(Number_of_disabled_members) > 0:
 							ff_xml_dict['group_im2th52']['If_yes_specify_type_of_disability'] = get_option_text(disability_option_list, get_answer('If_yes_specify_type_of_disability', fact))
 					except:
 						#unprocess_records[str(slum)].append([str(household), "unable to process number of disable member for answer =>"+(Number_of_disabled_members if Number_of_disabled_members else 'NoneTYpe')])
@@ -327,7 +342,7 @@ def create_ff_xml(options):
 					
 					ff_xml_dict['group_im2th52']['Occupation_s_of_earning_membe'] = get_answer('Occupation_s_of_earning_membe', fact)
 					
-					ff_xml_dict['group_im2th52']['Approximate_monthly_family_income'] = get_answer('Approximate_monthly_family_income', fact)
+					ff_xml_dict['group_im2th52']['Approximate_monthly_family_income_in_Rs'] = get_answer('Approximate_monthly_family_income_in_Rs', fact)
 					
 					#print('process - Family Members Information')
 					#write_log('process - Family Members Information')
@@ -345,7 +360,7 @@ def create_ff_xml(options):
 					if Have_you_upgraded_yo_ng_individual_toilet:
 						ff_xml_dict['group_ne3ao98']['Have_you_upgraded_yo_ng_individual_toilet'] = Have_you_upgraded_yo_ng_individual_toilet
 					
-					ff_xml_dict['group_ne3ao98']['Cost_of_upgradation'] = get_answer('Cost_of_upgradation', fact)
+					ff_xml_dict['group_ne3ao98']['Cost_of_upgradation_in_Rs'] = get_answer('Cost_of_upgradation_in_Rs', fact)
 					
 					Use_of_toilet = get_answer('Use_of_toilet', fact)
 					if Use_of_toilet:
