@@ -28,7 +28,7 @@ gl_rhs_xml_dict = {
 	'group_ye18c77' : {
 		'group_ud4em45' : {
 			'what_is_the_full_name_of_the_family_head_' : None,
-			'mobile_number' : None,
+			'mobile_number' : None,               
 			'adhar_card_number' : None
 		},
 		'group_yw8pj39' : {
@@ -103,6 +103,9 @@ join survey_survey s on s.id = f.survey_id join survey_project p on p.id = s.pro
 where s.id = %s and p.id = %s and f.content_type_id = 27 \
 order by household.slum_id, household.household_code asc"
 
+# get list of option to set as text instead of option
+qry_fact_option_text_list = "select code, description from survey_factoption where desired_fact_id=%s order by code asc"
+
 # get list of all question and answer for all household in slum from second survey
 qry_rhs_master_survey_slum_household_question_answer ="(select household1.household_code, '-1' as question_id, to_char(min(f1.updated_on),'YYYY-MM-DD\"T\"HH24:MI:SS.MS+05:30') as answer from survey_fact f1 \
 join survey_survey s1 on s1.id = f1.survey_id join survey_project p1 on p1.id = s1.project_id \
@@ -126,6 +129,7 @@ def create_rhs_xml(options):
 	global question_map_dict
 	global question_option_map_dict
 	global option_dict
+	global qry_fact_option_text_list
 	
 	global city_ward_slum_dict
 	
@@ -213,6 +217,10 @@ def create_rhs_xml(options):
 	#print("fetch slum household list")
 	#print(new_slum_household_list)
 	write_log("fetch household slum survey list")
+	
+	# get list of option to set as text into xml
+	surveyor_option_list = get_question_answer(qry_fact_option_text_list % 471)
+	#print ("surveyor option list is :", surveyor_option_list)
 	
 	rhs_group['New'] = new_slum_household_list
 	
@@ -308,7 +316,7 @@ def create_rhs_xml(options):
 							if date_of_rhs:
 								rhs_xml_dict['group_ce0hf58']['date_of_rhs'] = get_formatted_data(date_of_rhs)
 							
-							rhs_xml_dict['group_ce0hf58']['name_of_surveyor_who_collected_rhs_data'] = get_answer('name_of_surveyor_who_collected_rhs_data', fact)
+							rhs_xml_dict['group_ce0hf58']['name_of_surveyor_who_collected_rhs_data'] = get_option_text(surveyor_option_list, get_answer('name_of_surveyor_who_collected_rhs_data', fact))
 							rhs_xml_dict['group_ce0hf58']['house_no'] = get_answer('house_no', fact)
 							
 							Type_of_structure_occupancy = get_answer('Type_of_structure_occupancy', fact)
@@ -361,6 +369,9 @@ def create_rhs_xml(options):
 								Current_place_of_defecation_toilet = get_answer('Current_place_of_defecation_toilet', fact)
 								if Current_place_of_defecation_toilet:
 									rhs_xml_dict['group_ye18c77']['group_yw8pj39']['Current_place_of_defecation_toilet'] = Current_place_of_defecation_toilet
+								if not Current_place_of_defecation_toilet:
+									rhs_xml_dict['group_ye18c77']['group_yw8pj39']['Current_place_of_defecation_toilet'] = '03'
+									Current_place_of_defecation_toilet = '03'
 								
 								does_any_member_of_your_family_go_for_open_defecation_ = get_answer('does_any_member_of_your_family_go_for_open_defecation_', fact)
 								if does_any_member_of_your_family_go_for_open_defecation_:
@@ -372,7 +383,7 @@ def create_rhs_xml(options):
 										rhs_xml_dict['group_ye18c77']['group_yw8pj39']['where_the_individual_toilet_is_connected_to_'] = where_the_individual_toilet_is_connected_to_
 								
 								type_of_water_connection = get_answer('type_of_water_connection', fact)
-								if type_of_water_connection:
+								if type_of_water_connection and type_of_water_connection in ['01', '02', '03', '04', '05', '06', '07']:
 									rhs_xml_dict['group_ye18c77']['group_yw8pj39']['type_of_water_connection'] = type_of_water_connection
 								
 								facility_of_waste_collection = get_answer('facility_of_waste_collection', fact)
@@ -380,24 +391,26 @@ def create_rhs_xml(options):
 									rhs_xml_dict['group_ye18c77']['group_yw8pj39']['facility_of_waste_collection'] = facility_of_waste_collection
 								
 								if Current_place_of_defecation_toilet and (Current_place_of_defecation_toilet != '01' or Current_place_of_defecation_toilet != '02'):
-									Are_you_interested_in_individu = get_answer('Are_you_interested_in_individu', fact)
-									if Are_you_interested_in_individu:
+# 									Are_you_interested_in_individu = get_answer('Are_you_interested_in_individu', fact)
+# 									if Are_you_interested_in_individu:
+# 										rhs_xml_dict['group_ye18c77']['group_yw8pj39']['Are_you_interested_in_individu'] = Are_you_interested_in_individu
+										
+									if_yes_why_ = get_answer('if_yes_why_', fact)
+									if if_yes_why_ and if_yes_why_ != '11':
+										Are_you_interested_in_individu = '01'
 										rhs_xml_dict['group_ye18c77']['group_yw8pj39']['Are_you_interested_in_individu'] = Are_you_interested_in_individu
-										
-										if Are_you_interested_in_individu == '01':
-											if_yes_why_ = get_answer('if_yes_why_', fact)
-											if if_yes_why_:
-												rhs_xml_dict['group_ye18c77']['group_yw8pj39']['if_yes_why_'] = if_yes_why_
+										rhs_xml_dict['group_ye18c77']['group_yw8pj39']['if_yes_why_'] = if_yes_why_
 											
-										if Are_you_interested_in_individu == '02':
-											if_no_why_ = get_answer('if_no_why_', fact)
-											if if_no_why_:
-												rhs_xml_dict['group_ye18c77']['group_yw8pj39']['if_no_why_'] = if_no_why_
+									if_no_why_ = get_answer('if_no_why_', fact)
+									if if_no_why_ and if_no_why_ in ['01', '02', '03', '04', '05', '06', '07', '08']:
+										Are_you_interested_in_individu = '02'
+										rhs_xml_dict['group_ye18c77']['group_yw8pj39']['Are_you_interested_in_individu'] = Are_you_interested_in_individu
+										rhs_xml_dict['group_ye18c77']['group_yw8pj39']['if_no_why_'] = if_no_why_
 										
-										if Are_you_interested_in_individu == '01' and city != 3789:
-											type_of_toilet_preference = get_answer('type_of_toilet_preference', fact)
-											if type_of_toilet_preference:
-												rhs_xml_dict['group_ye18c77']['group_yw8pj39']['type_of_toilet_preference'] = type_of_toilet_preference
+									if Are_you_interested_in_individu == '01' and city != 3789:
+										type_of_toilet_preference = get_answer('type_of_toilet_preference', fact)
+										if type_of_toilet_preference and type_of_toilet_preference in ['01','02','03','04']:
+											rhs_xml_dict['group_ye18c77']['group_yw8pj39']['type_of_toilet_preference'] = type_of_toilet_preference
 								
 								if Current_place_of_defecation_toilet and Current_place_of_defecation_toilet != '01':
 									Have_you_applied_for_indiviual = get_answer('Have_you_applied_for_indiviual', fact)

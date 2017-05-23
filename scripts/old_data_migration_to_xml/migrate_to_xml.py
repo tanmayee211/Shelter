@@ -73,6 +73,7 @@ mapped_excel_path_mapping = {
 	},
 	# Kolhapur
 	'3': { 
+		'2': os.path.join(root_folder_path, 'FilesToRead', 'MappedExcel_Kolhapur', 'RHS_Old_New_QuestionMapping_Tanmayee.xlsx'), # RHS
 		'3': os.path.join(root_folder_path, 'FilesToRead', 'MappedExcel_Kolhapur', 'FF_Old_New_QuestionMapping_Tanmayee.xlsx'), # FF
 	},
 }
@@ -87,10 +88,10 @@ survey_xml_value_mapping = {
 	},
 	# RHS
 	'2': { 
-		'xml_root': 'a4K9qAQYGwsKxrpwvHuViw',
-		'xml_root_attr_id': 'a4K9qAQYGwsKxrpwvHuViw',
-		'xml_root_attr_version': 'vXS3hfQDM2CGiAZiFkupZQ',
-		'formhub_uuid': 'd00bbe550e6f463dbb66730ed8b0b663',
+		'xml_root': 'aJWGCEUXe4DcsJzETwMptL',
+		'xml_root_attr_id': 'aJWGCEUXe4DcsJzETwMptL',
+		'xml_root_attr_version': 'vpZtVDFQCHK93mPTToDA75',
+		'formhub_uuid': 'b12051466e154c5396876c33b634bd0b',
 	},
 	# FF
 	'3': { 
