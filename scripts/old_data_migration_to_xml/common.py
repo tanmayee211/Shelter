@@ -29,6 +29,7 @@ log_folder_path = os.path.join(root_folder_path, 'xml_output', 'log')
 # dictionary use to set mapping for survey after reading xls and xlsx
 question_map_dict = {}
 question_option_map_dict = {}
+missing_data_dict = {}
 
 option_dict = {}
 city_ward_slum_dict = {}
@@ -347,12 +348,38 @@ def read_map_excel(excelFile):
 	
 	return;
 
+
+#function specific to KMC for missing data
+def read_missing_data(excelFile):
+
+	global missing_data_dict
+
+	workbook = openpyxl.load_workbook(excelFile)
+	sheet_missing_data = workbook.worksheets[0]
+
+	for row in sheet_missing_data.iter_rows(row_offset=1):
+		row_data  = []
+		for cell in row:
+			row_data.append(cell.value)
+		
+		house_no = row_data[0]
+		#print ("house no:", house_no)
+		if not (house_no is None):
+			dict_key = house_no
+			missing_data_dict[dict_key] = {'556' : row_data[1]}
+			missing_data_dict[dict_key].update({'557' : row_data[2]})
+			missing_data_dict[dict_key].update({'555' : row_data[3]})
+			missing_data_dict[dict_key].update({'558' : row_data[4]})
+
+	return;
+
 # get answer for xml key from question-answer dictionary
 def get_answer(xml_key, fact_dict):
 
 	global question_map_dict
 	global question_option_map_dict
 	answer = None
+	#print ("options mapping dictionary:", question_option_map_dict)
 	
 	if xml_key in question_map_dict:
 		# get question id 
@@ -382,12 +409,18 @@ def get_answer(xml_key, fact_dict):
 					
 					if not(temp_answer is None):
 						answer = temp_answer.strip()
+					if temp_answer is None:
+						answer = None
+						
 				else:
 					if answer:
 						answer_option = int(answer)
 						if answer_option in question_option_map_dict[fact_id]:
 							answer = question_option_map_dict[fact_id][answer_option]
-		
+						#for an invalid option selection
+						else :
+							answer = None
+									
 	return answer;
 
 def get_name_id(xml_key, answer_text):
@@ -733,7 +766,6 @@ def get_ff_photo(xml_key, fact_dict, download_folder_path):
 	#check if answer is available
 	if fact_dict:
 		photo = get_answer(xml_key, fact_dict)
-		print ("***************photo after getting answer", photo)
 		
 		# get photo path (relative path)
 		photo_path = photo if not isinstance(photo, list) else photo[0]
@@ -926,6 +958,13 @@ def get_xml_photo_value(file_folder, file_name, xml_element):
 	#print(xml_value)
 	
 	return xml_value;
+
+def get_four_digit_house_number(house_number):
+	
+	if(len(house_number) == 1) :
+		return '000' + str(house_number)
+	if(len(house_number) == 2) :
+		return '00' + str(house_number)
 
 
 

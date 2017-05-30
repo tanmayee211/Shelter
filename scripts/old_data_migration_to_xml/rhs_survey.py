@@ -130,6 +130,7 @@ def create_rhs_xml(options):
 	global question_option_map_dict
 	global option_dict
 	global qry_fact_option_text_list
+	global missing_data_dict
 	
 	global city_ward_slum_dict
 	
@@ -162,6 +163,7 @@ def create_rhs_xml(options):
 	
 	#read old xls file city - ward - slum mapping
 	read_xml_excel(RHS_excelFile)
+	#read_extra_data()
 	#print("Read excel file")
 	write_log("Read excel file " + RHS_excelFile)
 	
@@ -263,7 +265,7 @@ def create_rhs_xml(options):
 					pass
 				
 				# process data only if slum code exists
-				if slum_code:
+				if slum_code.strip() == '273425260101':
 					#get admin ward and city code for slum
 					admin_ward = get_admin_ward(slum_code)
 					city = get_city_id(admin_ward)
@@ -279,10 +281,16 @@ def create_rhs_xml(options):
 					
 					# get question and answer for households in slum
 					household_fact = get_household_wise_question_answer(qry_rhs_question_answer)
-					#print(household_fact)
-					total_process_house += len(household_fact)
-					
-					# set progress bar
+					if slum_code.strip() == '273425260101':
+						missing_data_file = os.path.join(root_folder_path, 'FilesToRead/MappedExcel_Kolhapur', '273425260101.xlsx')
+						read_missing_data(missing_data_file)
+						
+						for key,value in household_fact.items():
+							if not (missing_data_dict[key] is None):
+								value.update(missing_data_dict[key])
+												
+#  					 set progress bar
+					total_process_house = total_process_house + len(household_fact)
 					show_progress_bar(progess_counter, total_process_house)
 					
 					# process each household in slum
@@ -318,6 +326,7 @@ def create_rhs_xml(options):
 							
 							rhs_xml_dict['group_ce0hf58']['name_of_surveyor_who_collected_rhs_data'] = get_option_text(surveyor_option_list, get_answer('name_of_surveyor_who_collected_rhs_data', fact))
 							rhs_xml_dict['group_ce0hf58']['house_no'] = get_answer('house_no', fact)
+							house_number = get_answer('house_no', fact)
 							
 							Type_of_structure_occupancy = get_answer('Type_of_structure_occupancy', fact)
 							if Type_of_structure_occupancy:
@@ -337,11 +346,14 @@ def create_rhs_xml(options):
 							
 							#Household Information - General Information
 							if Type_of_structure_occupancy == '01':
-								what_is_the_structure_of_the_house = get_answer('what_is_the_structure_of_the_house', fact)
+								house_number_four = get_four_digit_house_number(house_number)								
+								temp_dict = household_fact[house_number_four]
+								
+								what_is_the_structure_of_the_house = temp_dict['556']
 								if what_is_the_structure_of_the_house:
 									rhs_xml_dict['group_ye18c77']['group_yw8pj39']['what_is_the_structure_of_the_house'] = what_is_the_structure_of_the_house
 								
-								what_is_the_ownership_status_of_the_house = get_answer('what_is_the_ownership_status_of_the_house', fact)
+								what_is_the_ownership_status_of_the_house = temp_dict['557']
 								if what_is_the_ownership_status_of_the_house:
 									rhs_xml_dict['group_ye18c77']['group_yw8pj39']['what_is_the_ownership_status_of_the_house'] = what_is_the_ownership_status_of_the_house
 								
@@ -366,19 +378,16 @@ def create_rhs_xml(options):
 									#unprocess_records[str(slum)].append([str(household), "unable to process house area in sq ft for answer =>"+(house_area_in_sq_ft if not isinstance(house_area_in_sq_ft, list) else ','.join(house_area_in_sq_ft))])
 									pass
 								
-								Current_place_of_defecation_toilet = get_answer('Current_place_of_defecation_toilet', fact)
+								Current_place_of_defecation_toilet = temp_dict['558']
 								if Current_place_of_defecation_toilet:
 									rhs_xml_dict['group_ye18c77']['group_yw8pj39']['Current_place_of_defecation_toilet'] = Current_place_of_defecation_toilet
-								if not Current_place_of_defecation_toilet:
-									rhs_xml_dict['group_ye18c77']['group_yw8pj39']['Current_place_of_defecation_toilet'] = '03'
-									Current_place_of_defecation_toilet = '03'
 								
 								does_any_member_of_your_family_go_for_open_defecation_ = get_answer('does_any_member_of_your_family_go_for_open_defecation_', fact)
 								if does_any_member_of_your_family_go_for_open_defecation_:
 									rhs_xml_dict['group_ye18c77']['group_yw8pj39']['does_any_member_of_your_family_go_for_open_defecation_'] = does_any_member_of_your_family_go_for_open_defecation_
 								
 								if Current_place_of_defecation_toilet and (Current_place_of_defecation_toilet == '01' or Current_place_of_defecation_toilet == '02'):
-									where_the_individual_toilet_is_connected_to_ = get_answer('where_the_individual_toilet_is_connected_to_', fact)
+									where_the_individual_toilet_is_connected_to_ = temp_dict['555']
 									if where_the_individual_toilet_is_connected_to_:
 										rhs_xml_dict['group_ye18c77']['group_yw8pj39']['where_the_individual_toilet_is_connected_to_'] = where_the_individual_toilet_is_connected_to_
 								
